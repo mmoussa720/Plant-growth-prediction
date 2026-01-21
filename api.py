@@ -20,6 +20,6 @@ def predict():
 
     prediction = int(model.predict(df)[0])
     return jsonify({'Growth_Milestone': prediction})
-
+print(Flask.__version__)
 if __name__ == '__main__':
-    app.run(host='localhost', port=5000)
+    app.run(host='0.0.0.0', port=5000)
