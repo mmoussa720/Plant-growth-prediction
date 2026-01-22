@@ -12,7 +12,7 @@ firebase_config = {
     "auth_provider_x509_cert_url": os.getenv("auth_provider_x509_cert_url"),
     "token_uri": "https://oauth2.googleapis.com/token"
 }
-cred=credentials.Certificate("serviceaccount.json")
+cred=credentials.Certificate(firebase_config)
 initialize_app(cred)
 db=firestore.client()
 with open('plant_growth_model.pkl', 'rb') as f:
