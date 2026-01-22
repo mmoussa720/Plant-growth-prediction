@@ -7,7 +7,7 @@ firebase_config = {
     "type": "service_account",
     "project_id": os.getenv("project_id"),
     "private_key_id": os.getenv("private_key_id"),
-    "private_key": os.getenv("private_key").replace("\\n", "\n"),
+    "private_key": os.getenv("private_key"),
     "client_email": os.getenv("client_email"),
     "auth_provider_x509_cert_url": os.getenv("auth_provider_x509_cert_url"),
     "token_uri": "https://oauth2.googleapis.com/token"
