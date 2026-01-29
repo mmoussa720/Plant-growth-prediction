@@ -30,7 +30,7 @@ app = Flask(__name__)
 
 CATEGORICAL_COLS = ["Soil_Type", "Water_Frequency", "Fertilizer_Type"]
 
-WATER_ORDER = ["weekly", "bi-weekly", "daily"]
+WATER_ORDER = ["bi-weekly","weekly", "daily"]
 
 MAX_STEPS = 6 
 
@@ -73,6 +73,23 @@ def improve_conditions(data):
 
     return 0, list(set(improvements)), current_data
 
+@app.route('/settings', methods=['GET'])
+def get_settings():
+    try:
+        configs = db.collection('configurations').limit(1).stream()
+        for doc in configs:
+            return jsonify(doc.to_dict())
+        return jsonify({})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/prediction', methods=['GET'])
+def get_prediction():
+    try:
+        predictions = db.collection('predictions').order_by('date').limit(10).stream()
+        return jsonify([doc.to_dict() for doc in predictions])
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -96,6 +113,8 @@ def predict():
         db.collection('predictions').add({
             'input_data': data,
             'predicted_growth_milestone': int(prediction),
+            'improvements_needed': result["improvements_needed"],
+            'recommended_final_conditions': result["recommended_final_conditions"],
             'date': firestore.SERVER_TIMESTAMP
         })
 
@@ -103,7 +122,27 @@ def predict():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+        
+@app.route('/configure', methods=['POST'])
+def configure():
+    try:
+        data = request.json
+        db.collection('configurations').add({
+            'soil_type': data['soil_type'],
+            'fertilizer_Type': data['fertilizer_type'],
+            'water_Frequency': data['water_frequency'],
+            'watering_day':data['watering_day'],
+            'watering_time':data['watering_time'],
+        })
+
+        return jsonify({"status": "Configuration saved successfully."})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
+
+
