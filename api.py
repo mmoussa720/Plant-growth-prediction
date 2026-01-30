@@ -170,9 +170,9 @@ def check_irrigation():
     soil = soil_data[soil_type]
     # Check if VWC is below 50% depletion threshold
     if vwc < soil["50%"]:
-        return jsonify({"need_water": 1})
+        return 1
     else:
-        return jsonify({"need_water": 0})
+        return 0
     
 
 if __name__ == '__main__':
