@@ -1,3 +1,4 @@
+import csv
 from flask import Flask, request, jsonify
 import pickle
 from dotenv import load_dotenv
@@ -141,6 +142,38 @@ def configure():
         return jsonify({"error": str(e)}), 500
 
 
+
+def load_soil_data(csv_file="irrigation_data.csv"):
+    soil_dict = {}
+    with open(csv_file, newline="") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            soil_type = row["Soil_Type"]
+            soil_dict[soil_type] = {
+                "FC": float(row["Field_Capacity"]),
+                "WP": float(row["Wilting_Point"]),
+                "50%": float(row["Depletion_50"])
+            }
+    return soil_dict
+
+soil_data = load_soil_data()
+
+@app.route("/check_irrigation", methods=["POST"])
+def check_irrigation():
+    data = request.get_json()
+    soil_type = data.get("soil_type")
+    vwc = data.get("vwc") 
+
+    if soil_type not in soil_data:
+        return jsonify({"error": "Unknown soil type"}), 400
+
+    soil = soil_data[soil_type]
+    # Check if VWC is below 50% depletion threshold
+    if vwc < soil["50%"]:
+        return jsonify({"need_water": 1})
+    else:
+        return jsonify({"need_water": 0})
+    
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
