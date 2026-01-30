@@ -1,0 +1,13 @@
+Soil_Type,Field_Capacity,Wilting_Point,Depletion_50
+Sand,10,5,7.5
+Loamy Sand,12,5,8.5
+Sandy Loam,18,8,13.0
+Sandy Clay Loam,27,17,22.0
+Loam,28,14,21.0
+Sandy Clay,36,25,30.5
+Silt Loam,31,11,21.0
+Silt,30,6,18.0
+Clay Loam,36,22,29.0
+Silty Clay Loam,38,22,30.0
+Silty Clay,41,27,34.0
+Clay,42,30,36.0
