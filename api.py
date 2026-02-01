@@ -117,7 +117,7 @@ def predict():
             'recommended_final_conditions': result["recommended_final_conditions"],
             'date': firestore.SERVER_TIMESTAMP
         })
-
+        
         return jsonify(result)
 
     except Exception as e:
@@ -127,12 +127,17 @@ def predict():
 def configure():
     try:
         data = request.json
+
+        configs = db.collection('configurations').stream()
+        for doc in configs:
+            doc.reference.delete()
+
         db.collection('configurations').add({
             'soil_type': data['soil_type'],
             'fertilizer_Type': data['fertilizer_type'],
             'water_Frequency': data['water_frequency'],
-            'watering_day':data['watering_day'],
-            'watering_time':data['watering_time'],
+            'watering_day': data['watering_day'],
+            'watering_time': data['watering_time'],
         })
 
         return jsonify({"status": "Configuration saved successfully."})
